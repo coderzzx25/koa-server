@@ -1,0 +1,40 @@
+{
+  "name": "koa-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "/src/main.js",
+  "scripts": {
+    "start": "tsc && npm run copy-files && node dist/main.js",
+    "dev": "NODE_ENV=dev nodemon --watch 'src/**/*' -e ts,tsx --exec 'ts-node' ./src/main.ts",
+    "copy-files": "cpx 'src/**/*.key' dist"
+  },
+  "keywords": [],
+  "author": "coderzzx",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/bodyparser": "^5.1.1",
+    "@koa/cors": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^3.1.0",
+    "koa": "^2.15.3",
+    "koa-router": "^12.0.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/koa": "^2.15.0",
+    "@types/koa__cors": "^5.0.0",
+    "@types/koa-router": "^7.4.8",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "cpx": "^1.5.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

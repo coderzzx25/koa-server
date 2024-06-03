@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "outDir": "dist" // TS文件编译后会放入到此文件夹内
+  },
+  "include": ["src", ".eslintrc.js"]
+}
