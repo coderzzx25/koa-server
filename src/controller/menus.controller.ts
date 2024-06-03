@@ -39,10 +39,10 @@ class MenusController {
   }
 
   // 获取所有菜单
-  async getMenuList(ctx: Context) {
+  async getMenuAndPermissionList(ctx: Context) {
     const menus = await MenusModel.getAdvancedList({}, ['id', 'menu_name', 'grade', 'pid'], false);
     const ids = menus.map((item) => item.id);
-    let isPage = false;
+
     const MenuPermissionConditions: IConditions = {
       whereIn: {
         menu_id: ids
@@ -77,6 +77,46 @@ class MenusController {
     });
     const result = mapMenusAndPermsissionToTree(menusResult, menuPermissionResult);
     ctx.body = result;
+  }
+
+  async getMenuList(ctx: Context) {
+    const { menuName, page, limit } = ctx.query;
+    if (!page && !limit) {
+      ctx.throw(400, '参数错误');
+    }
+
+    const menuConditions: IConditions = {
+      where: {
+        status: 1
+      },
+      page: (Number(page) - 1) * Number(limit),
+      limit: Number(limit),
+      orderBy: {
+        id: 'desc'
+      }
+    };
+    const menuFields = ['id', 'menu_name', 'url', 'icon', 'grade', 'pid', 'create_time', 'update_time', 'status'];
+    if (menuName) {
+      menuConditions.like = {
+        menu_name: menuName
+      };
+    }
+
+    const [total, menus] = await MenusModel.getAdvancedList(menuConditions, menuFields, true, true);
+
+    const menuList = mapMenusToRoutes(menus);
+    ctx.body = {
+      total,
+      list: menuList
+    };
+  }
+
+  async getMenus(ctx: Context) {
+    const menus = await MenusModel.getAdvancedList({}, ['id', 'menu_name', 'grade', 'pid'], false);
+
+    const menuList = mapMenusToRoutes(menus);
+
+    ctx.body = menuList;
   }
 }
 

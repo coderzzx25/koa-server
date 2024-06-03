@@ -89,6 +89,9 @@ interface IMenu {
   icon: string;
   grade: number;
   pid: number;
+  create_time?: number;
+  update_time?: number;
+  status?: number;
 }
 
 interface IMenuTrees {
@@ -96,6 +99,11 @@ interface IMenuTrees {
   menuName: string;
   url: string;
   icon: string;
+  grade?: number;
+  pid?: number;
+  createTime?: string;
+  updateTime?: string;
+  status?: number;
   children?: IMenuTrees[];
 }
 // 将菜单转为动态路由
@@ -111,6 +119,11 @@ export const mapMenusToRoutes = (menus: IMenu[]): IMenuTrees[] => {
           menuName: menu_name,
           url,
           icon,
+          grade: menu.grade,
+          pid: menu.pid,
+          ...(menu.create_time && { createTime: timestampToDate(menu.create_time) }),
+          ...(menu.update_time && { updateTime: timestampToDate(menu.update_time) }),
+          status: menu.status,
           ...(children.length && { children })
         };
       });
