@@ -81,3 +81,39 @@ export const combinationMenusAndPermission = (menus: IRoles[], permission: IPerm
     };
   });
 };
+
+interface IMenu {
+  id: number;
+  menu_name: string;
+  url: string;
+  icon: string;
+  grade: number;
+  pid: number;
+}
+
+interface IMenuTrees {
+  id: string;
+  menuName: string;
+  url: string;
+  icon: string;
+  children?: IMenuTrees[];
+}
+// 将菜单转为动态路由
+export const mapMenusToRoutes = (menus: IMenu[]): IMenuTrees[] => {
+  const handleMenu = (menuList: IMenu[], pid: number): IMenuTrees[] => {
+    return menuList
+      .filter((menu) => menu.pid === pid)
+      .map((menu) => {
+        const { id, menu_name, url, icon } = menu;
+        const children = handleMenu(menuList, menu.id);
+        return {
+          id: id.toString(),
+          menuName: menu_name,
+          url,
+          icon,
+          ...(children.length && { children })
+        };
+      });
+  };
+  return handleMenu(menus, 0);
+};

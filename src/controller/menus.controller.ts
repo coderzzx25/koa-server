@@ -3,7 +3,7 @@ import RolesModel from '../models/RolesModel';
 import MenusModel from '../models/MenusModel';
 import MenuPermissionModel from '../models/MenuPermissionModel';
 import type { IConditions, IMenuList, IMenuPermission } from '../types';
-import { mapMenusAndPermsissionToTree } from '../utils/menu-handle';
+import { mapMenusAndPermsissionToTree, mapMenusToRoutes } from '../utils/menu-handle';
 
 class MenusController {
   // 获取角色菜单列表
@@ -22,7 +22,6 @@ class MenusController {
     const roleFields = ['menu_ids', 'permission_ids'];
     const [roleIds] = await RolesModel.getAdvancedList(roleConditions, roleFields, false);
     const menuIdsArray = roleIds.menu_ids.split(',').map(Number);
-    const permissionIdsArray = roleIds.permission_ids.split(',').map(Number);
     const MenusConditions: IConditions = {
       whereIn: {
         id: menuIdsArray
@@ -33,40 +32,10 @@ class MenusController {
     };
     const MenusFields = ['id', 'menu_name', 'url', 'icon', 'grade', 'pid'];
 
-    const MenuPermissionConditions: IConditions = {
-      whereIn: {
-        id: permissionIdsArray
-      },
-      where: {
-        status: 1
-      }
-    };
-    const MenuPermissionFields = ['id', 'menu_id', 'permission_name', 'permission_value'];
+    const menus = await MenusModel.getAdvancedList(MenusConditions, MenusFields, false);
 
-    const [menus, menuPermission] = await Promise.all([
-      MenusModel.getAdvancedList(MenusConditions, MenusFields, false),
-      MenuPermissionModel.getAdvancedList(MenuPermissionConditions, MenuPermissionFields, false)
-    ]);
-    const menusResult: IMenuList[] = menus.map((item) => {
-      return {
-        id: item.id,
-        menuName: item.menu_name,
-        url: item.url,
-        icon: item.icon,
-        grade: item.grade,
-        pid: item.pid
-      };
-    });
-    const menuPermissionResult: IMenuPermission[] = menuPermission.map((item) => {
-      return {
-        id: item.id,
-        menuId: item.menu_id,
-        permissionName: item.permission_name,
-        permissionValue: item.permission_value
-      };
-    });
-    const result = mapMenusAndPermsissionToTree(menusResult, menuPermissionResult);
-    ctx.body = result;
+    const menuList = mapMenusToRoutes(menus);
+    ctx.body = menuList;
   }
 
   // 获取所有菜单
